@@ -5,18 +5,18 @@ server:
 
 distributor:
   receivers:                           # this configuration will listen on all ports and protocols that tempo is capable of.
-    jaeger:                            # the receives all come from the OpenTelemetry collector.  more configuration information can
-      protocols:                       # be found there: https://github.com/open-telemetry/opentelemetry-collector/tree/master/receiver
-        thrift_http:                   #
-        grpc:                          # for a production deployment you should only enable the receivers you need!
-        thrift_binary:
-        thrift_compact:
-    zipkin:
-    otlp:
-      protocols:
-        http:
-        grpc:
-    opencensus:
+    # jaeger:                            # the receives all come from the OpenTelemetry collector.  more configuration information can
+    #   protocols:                       # be found there: https://github.com/open-telemetry/opentelemetry-collector/tree/master/receiver
+    #     thrift_http:                   #
+    #     grpc:                          # for a production deployment you should only enable the receivers you need!
+    #     thrift_binary:
+    #     thrift_compact:
+#     zipkin:
+#     otlp:
+#       protocols:
+#         http:
+#         grpc:
+#     opencensus:
 
 ingester:
   trace_idle_period: 10s               # the length of time after a trace has not received spans to consider it complete and flush it
@@ -32,13 +32,15 @@ compactor:
 
 storage:
   trace:
-    backend: local                     # backend configuration to use
+    backend: s3                     # backend configuration to use
+    s3:
+      bucket: testa
+      endpoint: minio:9000
+      insecure: true
     wal:
       path: /tmp/tempo/wal            # where to store the the wal locally
       #bloom_filter_false_positive: .05 # bloom filter false positive rate.  lower values create larger filters but fewer false positives
       #index_downsample: 10             # number of traces per index record
-    local:
-      path: /tmp/tempo/blocks
     pool:
       max_workers: 100                 # the worker pool mainly drives querying, but is also used for polling the blocklist
       queue_depth: 10000
